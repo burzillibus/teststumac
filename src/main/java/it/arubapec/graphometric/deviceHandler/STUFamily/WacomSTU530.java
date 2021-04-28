@@ -5,6 +5,7 @@ package it.arubapec.graphometric.deviceHandler.STUFamily;
 
 import com.WacomGSS.STU.Tablet;
 import com.WacomGSS.STU.UsbDevice;
+import it.arubapec.graphometric.deviceHandler.GraphometricTablet;
 import it.arubapec.graphometric.exception.GraphometricException;
 import it.arubapec.graphometric.utils.Rectangle;
 import it.arubapec.graphometric.utils.Point;
@@ -74,4 +75,8 @@ public class WacomSTU530 extends STUFamily {
         super.setHandwritingDisplayArea(35, 35, 30, 100);
     }
 
+    @Override
+    public GraphometricTablet getConnectedTablet() {
+        return instance;
+    }
 }

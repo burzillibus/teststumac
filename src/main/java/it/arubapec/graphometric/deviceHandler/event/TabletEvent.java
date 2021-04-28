@@ -8,6 +8,8 @@
  */
 package it.arubapec.graphometric.deviceHandler.event;
 
+import it.arubapec.graphometric.deviceHandler.GraphometricPoint;
+
 import javax.swing.event.EventListenerList;
 import java.util.EventObject;
 

@@ -13,11 +13,10 @@ import com.WacomGSS.STU.Protocol.*;
 import com.WacomGSS.STU.STUException;
 import com.WacomGSS.STU.Tablet;
 import com.WacomGSS.STU.UsbDevice;
-import it.arubapec.graphometric.AgiLib;
 import it.arubapec.graphometric.Defines;
+import it.arubapec.graphometric.deviceHandler.GraphometricTablet;
 import it.arubapec.graphometric.deviceHandler.encryptionHandler.AgiEncryptionHandler;
 import it.arubapec.graphometric.deviceHandler.encryptionHandler.AgiEncryptionHandler2;
-import it.arubapec.graphometric.deviceHandler.event.TabletEvent;
 import it.arubapec.graphometric.exception.GraphometricException;
 import it.arubapec.graphometric.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +39,7 @@ import it.arubapec.graphometric.utils.Rectangle;
 /**
  * @author Vincenzo Mangiapanello <vincenzo.mangiapanello@staff.aruba.it>
  */
-public abstract class STUFamily implements ITabletHandler {
+public abstract class STUFamily extends GraphometricTablet implements ITabletHandler {
     public String DeviceModel;
 
     protected Tablet tablet;
@@ -67,7 +66,7 @@ public abstract class STUFamily implements ITabletHandler {
     private boolean canRaiseEvent = true; //TODO verificare che sia veramente necessario
     //L'ultimo punto rilevato era a contatto con la schermo
     private boolean wasDown = false;
-    //Lo schermo è stato toccato almeno una volta
+    //Lo schermo e' stato toccato almeno una volta
     private boolean firstTouchOccurred = false;
     private int elapsedMillisecond = 0;
     private int shortModuleAccumulator = 0;
@@ -160,7 +159,6 @@ public abstract class STUFamily implements ITabletHandler {
             xCoeff = (float) width / (float) tablet.getCapability().getTabletMaxX();
             yCoeff = (float) height / (float) tablet.getCapability().getTabletMaxY();
 
-            initGraphicText();
         } catch (STUException ex) {
             throw new GraphometricException(ex);
         }
@@ -168,16 +166,20 @@ public abstract class STUFamily implements ITabletHandler {
 
 
     /**
-     * Initialize the graphic resource used to show text privacy
+     * Set the handwrite display area of the tablet
+     *
+     * @param upperLeftXpixel
+     * @param upperLeftYpixel
+     * @param lowerRightXpixel_Diff
+     * @param lowerRightYpixel_Diff
+     * @throws GraphometricException
      */
-    private void initGraphicText() throws GraphometricException {
+    protected void setHandwritingDisplayArea(int upperLeftXpixel, int upperLeftYpixel, int lowerRightXpixel_Diff, int lowerRightYpixel_Diff) throws GraphometricException {
         try {
-            scrollLastImg = ImageIO.read(AgiLib.getInstance().getClass().getClassLoader().getResource(Defines.getSTUResource(DeviceModel, PRIVACY_SCROLL_LAST)));
-            scrollNoImg = ImageIO.read(AgiLib.getInstance().getClass().getClassLoader().getResource(Defines.getSTUResource(DeviceModel, PRIVACY_NO_SCROLL)));
-            scrollFullImg = ImageIO.read(AgiLib.getInstance().getClass().getClassLoader().getResource(Defines.getSTUResource(DeviceModel, PRIVACY_SCROLL_FULL)));
-            scrollFirstImg = ImageIO.read(AgiLib.getInstance().getClass().getClassLoader().getResource(Defines.getSTUResource(DeviceModel, PRIVACY_SCROLL_FIRST)));
-        } catch (IOException e) {
-            throw new GraphometricException(e);
+            //Handwrite Area
+            tablet.setHandwritingDisplayArea(new com.WacomGSS.STU.Protocol.Rectangle(upperLeftXpixel, upperLeftYpixel, tablet.getCapability().getScreenWidth() - lowerRightXpixel_Diff, tablet.getCapability().getScreenHeight() - lowerRightYpixel_Diff));
+        } catch (STUException ex) {
+            throw new GraphometricException(ex.getMessage(), WRITING_DISPLAY_ERROR, ex);
         }
     }
 
@@ -244,6 +246,107 @@ public abstract class STUFamily implements ITabletHandler {
 
 
 
+
+
+    /**
+     * Check if the tablet is connected
+     *
+     * @return
+     */
+    @Override
+    public boolean isConnected() {
+        /*TODO Su C# viene fatto un controllo particolare*/
+        return tablet != null && tablet.isConnected();
+    }
+
+    @Override
+    public void imageToScreen(BufferedImage image) throws GraphometricException {
+        try {
+            tablet.writeImage(encodingMode, ProtocolHelper.flatten(image, image.getWidth(), image.getHeight(), useColor));
+        } catch (STUException ex) {
+            throw new GraphometricException(ex);
+        }
+    }
+
+    /**
+     * @param penData
+     */
+    @Override
+    public void onPenData(PenData penData) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * @param penDataOption
+     */
+    @Override
+    public void onPenDataOption(PenDataOption penDataOption) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * @param penDataEncrypted
+     */
+    @Override
+    public void onPenDataEncrypted(PenDataEncrypted penDataEncrypted) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * @param penDataEncryptedOption
+     */
+    @Override
+    public void onPenDataEncryptedOption(PenDataEncryptedOption penDataEncryptedOption) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * @param penDataTimeCountSequence
+     */
+    @Override
+    public void onPenDataTimeCountSequence(PenDataTimeCountSequence penDataTimeCountSequence) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * @param encryptionStatus
+     */
+    @Override
+    public void onEncryptionStatus(EncryptionStatus encryptionStatus) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * @param devicePublicKey
+     */
+    @Override
+    public void onDevicePublicKey(DevicePublicKey devicePublicKey) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * @param stue
+     */
+    @Override
+    public void onGetReportException(STUException stue) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * @param bytes
+     */
+    @Override
+    public void onUnhandledReportData(byte[] bytes) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public void documentPreviewAndSign(String pdfPath, SignLocation autoscrolLocation, String docTitle, boolean showAckButtons) throws GraphometricException {
+        throw new UnsupportedOperationException();
+    }
+
+
+
     @Override
     public void onEventDataSignatureEncrypted(EventDataSignatureEncrypted encrypted) {
 
@@ -271,6 +374,11 @@ public abstract class STUFamily implements ITabletHandler {
 
     @Override
     public void onEventDataKeyPadEncrypted(EventDataKeyPadEncrypted eventDataKeyPadEncrypted) {
+
+    }
+
+    @Override
+    public void onPenDataTimeCountSequenceEncrypted(PenDataTimeCountSequenceEncrypted penData) {
 
     }
 

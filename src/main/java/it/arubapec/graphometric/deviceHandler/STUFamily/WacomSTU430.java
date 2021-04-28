@@ -3,9 +3,11 @@
  */
 package it.arubapec.graphometric.deviceHandler.STUFamily;
 
+import com.WacomGSS.STU.Protocol.*;
 import com.WacomGSS.STU.STUException;
 import com.WacomGSS.STU.Tablet;
 import com.WacomGSS.STU.UsbDevice;
+import it.arubapec.graphometric.deviceHandler.GraphometricTablet;
 import it.arubapec.graphometric.exception.GraphometricException;
 import it.arubapec.graphometric.utils.Rectangle;
 
@@ -80,4 +82,9 @@ public class WacomSTU430 extends STUFamily {
         textScrollUpRectangle = new Rectangle(178, 163, 30, 37);
     }
 
+
+    @Override
+    public GraphometricTablet getConnectedTablet() {
+        return instance;
+    }
 }
