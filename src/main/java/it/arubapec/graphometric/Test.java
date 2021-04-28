@@ -22,7 +22,7 @@ public class Test {
 
     private void init() {
         try {
-            connectedTablet = GraphometricTabletFactory.connect(null, null);
+            connectedTablet = GraphometricTabletFactory.connect(GraphometricTablet.SupportedTablet.Undefined);
         } catch (GraphometricException e) {
             e.printStackTrace();
         }

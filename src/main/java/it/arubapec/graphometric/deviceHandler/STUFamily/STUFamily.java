@@ -219,7 +219,7 @@ public abstract class STUFamily extends GraphometricTablet implements ITabletHan
     private byte[] resourceToByte(String resourcename) throws GraphometricException {
         try {
             //Carica le immagini di default e le renderizza per il device
-            BufferedImage bitmap = ImageIO.read(STUFamily.class.getClassLoader().getResource(resourcename));
+            BufferedImage bitmap = ImageIO.read(getClass().getClassLoader().getResourceAsStream(resourcename));
             return ProtocolHelper.flatten(bitmap, bitmap.getWidth(), bitmap.getHeight(), useColor);
         } catch (IllegalArgumentException ie) {
             throw new GraphometricException(ie);
