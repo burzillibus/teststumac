@@ -1,8 +1,10 @@
 package it.arubapec.graphometric;
 
 
+import com.WacomGSS.STU.ITabletHandler;
 import it.arubapec.graphometric.deviceHandler.GraphometricTablet;
 import it.arubapec.graphometric.deviceHandler.GraphometricTabletFactory;
+import it.arubapec.graphometric.exception.GraphometricException;
 
 import static it.arubapec.graphometric.exception.ErrorDefines.DEVICE_NOT_FOUND;
 
@@ -19,7 +21,11 @@ public class Test {
 
 
     private void init() {
-        connectedTablet = GraphometricTabletFactory.connect(null, null);
+        try {
+            connectedTablet = GraphometricTabletFactory.connect(null, null);
+        } catch (GraphometricException e) {
+            e.printStackTrace();
+        }
         if (connectedTablet == null) {
             System.out.println(DEVICE_NOT_FOUND);
         }

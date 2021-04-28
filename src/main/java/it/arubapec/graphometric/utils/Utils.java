@@ -43,7 +43,7 @@ public class Utils {
      * @return the int converted in byte[2]
      */
     public static byte[] intToByteArray(int a) {
-        //lo limito ad un array di 2 perché altrimenti eccede la lunghezza prevista per DHBase.
+        //lo limito ad un array di 2 perche' altrimenti eccede la lunghezza prevista per DHBase.
         byte[] ret = new byte[2];
         ret[1] = (byte) (a & 0xFF);
         ret[0] = (byte) ((a >> 8) & 0xFF);
@@ -64,26 +64,5 @@ public class Utils {
             array = tmp;
         }
         return array;
-    }
-
-    /**
-     * Return InputStream for the requested resource
-     *
-     * @param resource the embedded resource to get
-     * @return
-     * @throws GraphometricException
-     */
-    public static InputStream resourceInputStream(String resource) throws GraphometricException {
-        ClassLoader loader = AgiLib.getInstance().getClass().getClassLoader();
-        try {
-            URL url = loader.getResource(resource);
-            if (url == null) {
-                throw new GraphometricException(resource + " " + NOT_FOUND_ERROR, NOT_FOUND_ERROR);
-            }
-            return url.openStream();
-        } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
-            throw new GraphometricException(resource + " " + NOT_FOUND_ERROR, NOT_FOUND_ERROR, ex);
-        }
     }
 }
